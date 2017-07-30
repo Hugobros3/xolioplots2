@@ -1,0 +1,11 @@
+#Custom generator required for xolioplot plugin
+
+generator xolioplot
+	class: io.xol.plots.PlotsWorldGenerator
+	plotSize: 58
+	roadWidth: 6
+#Oh boi
+	roadSurface: stonebrick
+	plotsurface: grass
+	underground: dirt
+end
