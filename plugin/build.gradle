@@ -1,0 +1,28 @@
+// Apply the java plugin to add support for Java
+apply plugin: 'java'
+apply plugin: 'java-library'
+
+//TODO Make version depend on Git ?
+version = rootProject.version
+description = 'Handles server-side permissions and stuff.'
+
+repositories {
+	mavenLocal();
+	mavenCentral();
+	maven {
+		url "http://maven.xol.io/repository/public/"
+	}
+}
+
+jar {
+	//from 'plugin.info'
+}
+
+task pluginPackage(type: Zip) {
+	from configurations.runtime.allArtifacts.files
+}
+	
+dependencies {
+	compile group: 'io.xol.chunkstories', name: 'api', version: rootProject.ext.csApiBuiltAgainst
+	compile group: 'io.xol.chunkstories', name: 'core', version: rootProject.ext.csVersionBuiltAgainst
+}

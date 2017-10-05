@@ -1,0 +1,6 @@
+name: XolioPlots2
+authors: Gobrosse
+version: 1.0
+main: io.xol.plots.PlotsPlugin
+
+command: plot plots

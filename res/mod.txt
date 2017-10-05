@@ -1,0 +1,4 @@
+internalName: xolioplots
+name: XolioPlots
+version: 1.0b
+description: World generator stuff for xolioplots.

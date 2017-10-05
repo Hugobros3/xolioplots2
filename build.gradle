@@ -1,0 +1,102 @@
+/*
+ * XolioPlots2: WorldGenerator + plugin bundled in a single jar.
+ */
+
+// Apply the java plugin to add support for Java
+apply plugin: 'java'
+apply plugin: 'java-library'
+
+version = '1.0b'
+description = 'XolioPlots is for creating a creative server with plots player can claim and build on.'
+archivesBaseName = "xolioplots"
+
+// In this section you declare where to find the dependencies of your project
+repositories {
+	mavenLocal()
+    jcenter()
+	mavenCentral()
+	maven {
+		url "http://maven.xol.io/repository/public/"
+	}
+}
+
+jar {
+	//from 'plugin.info'
+}
+
+ext {
+	csApiBuiltAgainst = '113'
+	csVersionBuiltAgainst = '120'
+}
+
+subprojects {
+	ext {
+		csApiBuiltAgainst = rootProject.csApiBuiltAgainst
+		csVersionBuiltAgainst = rootProject.csVersionBuiltAgainst
+	}
+}
+	
+dependencies {
+	compile group: 'io.xol.chunkstories', name: 'api', version: csApiBuiltAgainst
+	
+	//Removed depency from actual game code; pending splitting of 'core' with the game implementation
+	compile group: 'io.xol.chunkstories', name: 'core', version: csVersionBuiltAgainst
+}
+
+task mod(type: Zip) {
+	//dependsOn(jar) //It figures it out on it's own apparently, this build system is cleverer than me :(
+
+	from 'res/'
+	from configurations.runtime.allArtifacts.files
+	
+	archiveName = "xolioplots_mod.zip"
+}
+
+task install(type: Copy) {
+	dependsOn mod
+
+	File csDir = null;
+	if(project.hasProperty('chunkStoriesDirectory')) {
+		csDir = new File(chunkStoriesDirectory);
+	}
+	else {
+		println 'Did not found a configured directory for the game files, using default one'
+		String appDataFolder = System.getProperty("user.dir");
+		if(System.getProperty("os.name").toLowerCase().startsWith("win"))
+			appDataFolder = System.getenv("APPDATA");
+		else if(System.getProperty("os.name").toLowerCase().startsWith("lin"))
+			appDataFolder = System.getProperty("user.home");
+		else if(System.getProperty("os.name").toLowerCase().startsWith("mac"))
+			appDataFolder = System.getProperty("user.home");
+	
+		csDir = new File(appDataFolder + "/.chunkstories");
+	}
+
+	include '**/*.zip'	
+	include '**/*.jar'
+
+	from 'build/distributions/'
+	into csDir.getPath() + '/mods/';
+}
+
+task artifacts {
+		group = "Help"
+			description = "Displays the artifacts associated with each configuration of " + project
+			doFirst {
+				configurations.findAll().each { config ->
+				println "${config}:"
+				
+				config.artifacts.getFiles().each { 
+					file -> println "" + file
+				}
+				
+				println ' '
+				
+				config.allDependencies.each { 
+					file -> println "" + file
+				}
+				
+				println ' zizi'
+			}
+		}
+	}
